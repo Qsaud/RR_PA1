@@ -44,7 +44,7 @@ Using _ggplot2_ plotting system.
 
 ```{r}
 interval_steps <- ddply(act,.(interval),summarise,avg.steps=mean(steps))
-interval_steps$interval <- sort(as.numeric(interval_steps$interval))
+interval_steps$interval <- as.numeric(interval_steps$interval)
 ggplot(data=interval_steps, aes(x=interval, y=avg.steps, group=1)) +
   geom_line(colour="black", size=0.5, shape=21, fill="green") +
   theme(panel.background = element_rect(fill = "#56B4E9", colour = 'gray'))+scale_x_continuous(name="Time Interval") +scale_y_continuous(name="Average Number of steps")
