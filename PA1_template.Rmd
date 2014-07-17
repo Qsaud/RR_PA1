@@ -103,7 +103,7 @@ data_with_weekdays <- transform(merged, day=weekdays)
 data_with_weekdays$wk <- ifelse(data_with_weekdays$day %in% c("السبت", "الأحد"),"weekend", "weekday")
 average_by_interval_wk <- ddply(data_with_weekdays, .(interval, wk), summarise, steps=mean(steps))
 average_by_interval_wk$interval <- as.numeric(average_by_interval_wk$interval)
-average_by_interval_wk$interval <-sort(average_by_interval_wk$interval)
+average_by_interval_wk$interval <-average_by_interval_wk$interval
 
 ```
 
