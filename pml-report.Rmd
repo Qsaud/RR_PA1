@@ -1,0 +1,101 @@
+---
+title: "Practical Machaine Learining Project"
+output: html_document
+---
+   
+
+###Introduction
+
+This document was prepared to build a predictive model to predict how good people do excersize , using a data obtained from this website http://groupware.les.inf.puc-rio.br/har.
+
+After examining the data ,we found many variables with many "NA" values ,Amputation technique was done(removing all variables with more than 60% of "NA" values).
+
+We used Random Forest methode to build our own predictive model,our final model  accuracy was 99.7 %.
+
+####Loading The Data and Libraries
+
+```{r,cache=TRUE,message=FALSE}
+
+library(caret)
+library(randomForest)
+main <- read.csv ("pml-training.csv",header=TRUE, sep=",", na.strings=c("NA",""))
+test <- read.csv ("pml-testing.csv",header=TRUE, sep=",", na.strings=c("NA",""))
+
+```
+
+####Splitting Data
+```{r,message=FALSE,cache=TRUE}
+set.seed(2222)
+inTrain = createDataPartition(main$class, p = .6,list=FALSE)
+training = main[ inTrain,]
+testing = main[-inTrain,]
+
+```
+
+####Removing Variables with more than 60% missing values
+
+```{r,message=FALSE,cache=TRUE}
+Keep <- c((colSums(!is.na(training[,-ncol(training)])) >= 0.6*nrow(training)))
+training   <-  training[,Keep]
+testing  <-  testing[,Keep]
+test <-test[,Keep]
+row.names(training) <- NULL
+row.names(testing) <- NULL
+
+
+```
+
+####Building the model using Random Forest
+
+```{r,message=FALSE,cache=TRUE}
+model <- randomForest(classe~.,data=training)
+
+```
+
+#### Testing the Model
+
+```{r,cache=TRUE}
+
+prid1 <- predict(model,newdata=testing,type="class")
+confusionMatrix(prid3, training$classe)
+
+
+```
+
+Note that the accuracy of our model is 99.7%.
+
+
+###### Because there was a problem in running predict function for the Test set due to the type of variables discrepancy we transfer the data of the test to the testing data frame and after that we ran the predict function.
+
+```{r,message=FALSE,cache=TRUE}
+
+testing <- testing[1:20,]
+testing[1:20,] <- test[1:20,]
+test <- testing
+row.names(test) <- NULL
+
+```
+
+#### Running the Model on Test set
+```{r}
+prid2 <- predict(model3,newdata=test)
+```
+
+##### wrting the result to text files as required for the course
+
+```{r,message=FALSE,cache=TRUE}
+
+
+ pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+pml_write_files(prid2)
+
+
+```
+
